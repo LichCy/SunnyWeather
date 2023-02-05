@@ -1,5 +1,6 @@
 package com.lch.sunnyweather.ui.place
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lch.sunnyweather.R
+import com.lch.sunnyweather.logic.dao.PlaceDao
+import com.lch.sunnyweather.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 
 class PlaceFragment : Fragment() {
@@ -28,7 +31,19 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        // 获取历史记录值
+        if (PlaceDao.isPlaceSaved()) {
+            val place = PlaceDao.getSavedPlace()
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            // 启动
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
 
         // recycler相关配置
         val layoutManager = LinearLayoutManager(activity)
